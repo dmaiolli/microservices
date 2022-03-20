@@ -3,7 +3,7 @@ package br.com.denys.customer;
 import org.springframework.stereotype.Service;
 
 @Service
-public record CustomerService() {
+public record CustomerService(CustomerRepository customerRepository) {
     public void registerCustomer(CustomerRegistrationRequest customerRequest) {
         Customer customer = Customer.builder()
                 .firstName(customerRequest.firstName())
@@ -13,6 +13,7 @@ public record CustomerService() {
 
         // todo: check if email valid
         // todo: check if email not taken
-        // todo: store customer in db
+
+        customerRepository.save(customer);
     }
 }
