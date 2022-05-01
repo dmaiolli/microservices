@@ -13,10 +13,10 @@
       <module>fraud</module>
     <module>eureka-server</module>
     <module>clients</module>
+      <module>notification</module>
   </modules>
 
   <name>microservices</name>
-<!--  <url>http://www.example.com</url>-->
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
