@@ -1,8 +1,8 @@
 package br.com.denys.customer;
 
+import br.com.denys.amqp.RabbitMQMessageProducer;
 import br.com.denys.clients.fraud.FraudCheckResponse;
 import br.com.denys.clients.fraud.FraudClient;
-import br.com.denys.clients.notification.NotificationClient;
 import br.com.denys.clients.notification.NotificationRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final FraudClient fraudClient;
-    private final NotificationClient notificationClient;
+    private final RabbitMQMessageProducer rabbitMQMessageProducer;
 
     public void registerCustomer(CustomerRegistrationRequest customerRequest) {
         Customer customer = Customer.builder()
@@ -34,15 +34,20 @@ public class CustomerService {
         if(Boolean.TRUE.equals(fraudCheckResponse.isFraudster())) {
             throw new IllegalStateException("fraudster");
         }
-        // todo: send notification
 
-        notificationClient.sendNotification(
-                NotificationRequest.builder()
-                        .toCustomerId(customer.getId())
-                        .toCustomerEmail(customer.getEmail())
-                        .message("Hi, welcome to microservice")
-                        .sender("Denys")
-                        .build());
+        NotificationRequest notificationRequest = NotificationRequest.builder()
+                .toCustomerId(customer.getId())
+                .toCustomerEmail(customer.getEmail())
+                .message("Hi, welcome to microservice")
+                .sender("Denys")
+                .build();
+
+        rabbitMQMessageProducer.publish(
+                notificationRequest,
+                "internal.exchange",
+                "internal.notification.routing-key"
+        );
+
         log.info("new notification send");
     }
 }
