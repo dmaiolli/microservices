@@ -12,11 +12,11 @@ When you create a new Costumer, the costumerApplication request to Fraud microse
 ## How to run
 1. Clone this repository and open it on your favorite java IDE
 2. Run maven to import all dependencies
-3. Run docker-compose.yml: `docker-compose up -d` on console
+3. Run docker-compose.yml: `docker-compose up -d` on console (It will start apigateway and eureka-server(service discovery))
 4. Start first the `EurekaServerApplication` to start the service discovery and load balance
 5. Start one or more Costumers and Fraud application(Eureka supports multiple instances)
    1. If you start two or more instances, certificate to alter the server.port
-6. Open some REST Client like [Insomnia](https://insomnia.rest/download) and a Post to `http://costumer/api/v1/customers`
+6. Open some REST Client like [Insomnia](https://insomnia.rest/download) and a Post to `http://localhost:8083/api/v1/customers`
    1. Body <br/>
    { "firstName": "Example",<br/>
       "lastName": "Example",<br/>
