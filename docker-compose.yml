@@ -12,6 +12,7 @@ services:
       - "5432:5432"
     networks:
       - postgres
+      - spring
     restart: unless-stopped
   pgadmin:
     container_name: pgadmin
@@ -40,6 +41,8 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - spring
   eureka-server:
     image: dmaiolli/eureka-server:latest
     container_name: eureka-server
@@ -63,6 +66,22 @@ services:
     depends_on:
       - zipkin
       - eureka-server
+  ms-customer:
+    image: dmaiolli/customer:latest
+    container_name: customer
+    ports:
+      - "8080:8080"
+    networks:
+      - spring
+      - postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - postgres
+      - rabbitmq
+      - zipkin
+      - eureka-server
+      - apigateways
 networks:
   postgres:
     driver: bridge
